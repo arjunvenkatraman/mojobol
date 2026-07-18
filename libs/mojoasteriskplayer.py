@@ -58,7 +58,7 @@ def checkresult (params):
     """
     params = params.rstrip()
     if re.search('^200',params):
-        result = re.search('result=([\d*#]+)',params)
+        result = re.search(r'result=([\d*#]+)',params)
         if (not result):
             sys.stderr.write("FAIL ('%s')\n" % params)
             sys.stderr.flush()
@@ -210,6 +210,7 @@ class MojoAsteriskPlayer:
         play(audiofile)
         return True
     def stepCapture(self,step):
+        stepresources=self.workflow.getStepResources(step)
         instructions_resource_guid=step['instructions_resource']['guid']
         instructions_resource=self.workflow.getStepResourceByGuid(stepresources,instructions_resource_guid)
         invalid_resource_guid=step['invalid_resource']['guid']

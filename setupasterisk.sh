@@ -6,4 +6,3 @@ sudo cp /opt/mojobol/conf/sip.conf /etc/asterisk/sip.conf
 sudo /etc/init.d/asterisk restart
 rm /usr/share/asterisk/agi-bin/mojobol
 sudo ln -s /opt/mojobol/bin /usr/share/asterisk/agi-bin/mojobol
-sudo chmod a+rwx -R /opt/mojobol
