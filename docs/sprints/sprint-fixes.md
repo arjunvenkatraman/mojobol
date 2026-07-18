@@ -43,17 +43,30 @@ The three are mutually independent — all can start at once.
 
 ## Exit checklist
 
-Merge-blocking, verifiable now (no new format/simulator required):
+Merge-blocking, verifiable now (no new format/simulator required) — all of these
+are enforced by `pytest` (`tests/`, run in CI via `.github/workflows/ci.yml`):
 
-- [ ] `python3 -c "import ast,glob,sys; [ast.parse(open(f).read()) for f in glob.glob('bin/*.py')+glob.glob('tools/*.py')+glob.glob('libs/*.py')]"` parses clean (T1, T2).
-- [ ] `2to3 -f print $(git ls-files 'bin/*.py' 'tools/*.py')` reports no changes (T2).
-- [ ] `grep -rn 'os.isfile\|/opt/mojobol\|/opt/voh\|/opt/shwaasivr' bin/ libs/` returns nothing outside comments/docs (T1, T3).
-- [ ] No bare `except:` in the touched files (T1): `grep -rn 'except:' libs/ bin/` is empty.
-- [ ] The engine imports and initializes from a clone at an arbitrary path with only `MOJOBOL_CONFIG` set — no source edits (T3).
+- [x] Every `.py` under `bin/`, `libs/`, `tools/`, `tests/` parses under Python 3
+  — a stale `print x` is a SyntaxError (T2). `tests/test_static.py`.
+- [x] No `os.isfile` typo and no `pandas` import/use in the engine (T1).
+- [x] No bare `except:` in `bin/` or `libs/` (T1).
+- [x] `stepCapture` assigns `stepresources` before use (T1).
+- [x] No hardcoded `/opt/...` deployment paths in the engine entrypoints
+  (`libs/mojobol.py`, `libs/mojoasteriskplayer.py`, `bin/mojobol-svr*.py`) and no
+  blanket `chmod a+rwx -R /opt/mojobol` in `setupasterisk.sh` (T3).
+- [x] Config resolves via CLI arg > `MOJOBOL_CONFIG` > in-repo default (T3);
+  the engine builds `MojoBolResponder` against the sample flow and runs the
+  call-teardown paths (`updatedf`, `compresscallfile`) without crashing
+  (`tests/test_engine.py`).
 
-The stronger end-to-end acceptance ("example flow runs through the engine")
-completes once the simulator (T7) exists; until then this sprint is verified by
-the static/import checks above plus a manual dry-run.
+Run locally with `pip install -r requirements.txt && pytest -q`.
+
+The stronger end-to-end acceptance ("example flow runs through the engine"
+interactively) completes once the simulator (T7) exists; the integration tests
+here cover initialization and post-call bookkeeping in the meantime. The legacy
+outbound/report scripts (`mojobol-svr-out.py`, `returncalls.py`,
+`generatemenureport.py`) are ported to Py3 syntax but retain their site-specific
+`/opt` paths and Asterisk CLI calls — de-hardcoding those is out of scope here.
 
 ## Not in this sprint
 
