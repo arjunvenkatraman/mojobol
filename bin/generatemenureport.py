@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append("/opt/mojobol/libs")
@@ -13,12 +13,12 @@ if __name__=="__main__":
 	reportsdir=os.path.join(ms.directory,ms.reportsdir)
 	if not os.path.exists(reportsdir):
 		os.mkdir(reportsdir)
-	print reportsdir
+	print(reportsdir)
 	callsdir=os.path.join(ms.directory,ms.callsdir)
 	calls=os.listdir(callsdir)
 	responses=[]
 	for call in calls:
-		print call
+		print(call)
 		userid=call.split("-"+ms.name+"-")[0]
 		callstart=datetime.datetime.strptime(call.split("-"+ms.name+"-")[1],"%Y-%b-%d-%H-%M-%S")
 		files=os.listdir(os.path.join(ms.directory,ms.callsdir,call))
@@ -27,15 +27,15 @@ if __name__=="__main__":
 			if filename.startswith("menuresponsefile"):
 				menuresponsefiles.append(filename)
 		for filename in menuresponsefiles:
-			print os.path.join(ms.directory,ms.callsdir,call,filename)
+			print(os.path.join(ms.directory,ms.callsdir,call,filename))
 			f=open(os.path.join(ms.directory,ms.callsdir,call,filename),"r")
 			menuresponses=yaml.safe_load(f)
-			print menuresponses
+			print(menuresponses)
 			if menuresponses==None:
 				continue
 			else:
 				for response in menuresponses:
-					print response
+					print(response)
 					responserow={}
 					responserow['id']=response['id']
 					responserow['callid']=call
@@ -47,17 +47,14 @@ if __name__=="__main__":
 						responserow['userchoice'+choice['attemptno']]=choice['keypress']
 					responses.append(responserow)
 	if responses==[]:
-		print "No responses"
+		print("No responses")
 	else:
 		report=CSVFile()
-		report.colnames=responses[0].keys()
+		report.colnames=list(responses[0].keys())
 		report.matrix=responses
 		for row in report.matrix:
 			for key in row.keys():
 				if key not in report.colnames:
 					report.colnames.append(key)
 		report.padrows()
-		report.exportfile(os.path.join(reportsdir,"MenuResponseReport-"+datetime.datetime.now().strftime("%Y-%b-%d_%H_%M_%S")+".csv")) 
-		
-		
-		
+		report.exportfile(os.path.join(reportsdir,"MenuResponseReport-"+datetime.datetime.now().strftime("%Y-%b-%d_%H_%M_%S")+".csv"))

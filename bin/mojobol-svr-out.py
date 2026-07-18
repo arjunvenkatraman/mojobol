@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append("/opt/mojobol/libs")
@@ -16,16 +16,16 @@ if __name__=="__main__":
 	ms=MojoBolResponder("/opt/voh/voh.conf")
 	callsdir=os.path.join(ms.directory,ms.callsdir)
 	reportsdir=os.path.join(ms.directory,ms.reportsdir)
-	
+
 	callsbefore=os.listdir(callsdir)
-	print calloutsheet.colnames
+	print(calloutsheet.colnames)
 	for 	row in calloutsheet.matrix:
-		print row
+		print(row)
 		num=row['number']
 		linefreedom=os.popen("asterisk -rx 'sip show channels' | grep 10.0.0.25").read().strip()
 		linebusy=len(linefreedom)
 		while linebusy:
-			print "Line busy...sleeping for 10 seconds"
+			print("Line busy...sleeping for 10 seconds")
 			time.sleep(10)
 			#continue
 			linefreedom=os.popen("asterisk -rx 'sip show channels' | grep 10.0.0.25").read().strip()
@@ -50,10 +50,10 @@ if __name__=="__main__":
 	for call in callsafter:
 		if call not in callsbefore:
 			calls.append(call)
-	print calls
+	print(calls)
 	responses=[]
 	for call in calls:
-		print call
+		print(call)
 		userid=call.split("-"+ms.name+"-")[0]
 		callstart=datetime.datetime.strptime(call.split("-"+ms.name+"-")[1],"%Y-%b-%d-%H-%M-%S")
 		files=os.listdir(os.path.join(ms.directory,ms.callsdir,call))
@@ -62,15 +62,15 @@ if __name__=="__main__":
 			if filename.startswith("menuresponsefile"):
 				menuresponsefiles.append(filename)
 		for filename in menuresponsefiles:
-			print os.path.join(ms.directory,ms.callsdir,call,filename)
+			print(os.path.join(ms.directory,ms.callsdir,call,filename))
 			f=open(os.path.join(ms.directory,ms.callsdir,call,filename),"r")
 			menuresponses=yaml.safe_load(f)
-			print menuresponses
+			print(menuresponses)
 			if menuresponses==None:
 				continue
 			else:
 				for response in menuresponses:
-					print response
+					print(response)
 					responserow={}
 					responserow['id']=response['id']
 					responserow['callid']=call
@@ -82,15 +82,14 @@ if __name__=="__main__":
 						responserow['userchoice'+choice['attemptno']]=choice['keypress']
 					responses.append(responserow)
 	if responses==[]:
-		print "No responses"
+		print("No responses")
 	else:
 		report=CSVFile()
-		report.colnames=responses[0].keys()
+		report.colnames=list(responses[0].keys())
 		report.matrix=responses
 		for row in report.matrix:
 			for key in row.keys():
 				if key not in report.colnames:
 					report.colnames.append(key)
 		report.padrows()
-		report.exportfile(os.path.join(reportsdir,"OutcallMenuResponseReport-"+datetime.datetime.now().strftime("%Y-%b-%d_%H_%M_%S")+".csv")) 
-
+		report.exportfile(os.path.join(reportsdir,"OutcallMenuResponseReport-"+datetime.datetime.now().strftime("%Y-%b-%d_%H_%M_%S")+".csv"))
