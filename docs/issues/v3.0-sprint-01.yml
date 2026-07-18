@@ -1,18 +1,17 @@
-# Ready-to-file GitHub issues for the v3.0 revival (Sprint 1 — Essentials).
+# GitHub issue seeds for the v3.0 revival (Sprint 1 — Essentials).
 #
-# These were authored from the ADRs in docs/adr/. They could not be filed
-# automatically because the revival's GitHub token is read-only
-# (issues:write not granted). File them with:
+# These were authored from the ADRs in docs/adr/ and are now filed in the
+# tracker (arjunvenkatraman/mojobol #1–#9). This file remains the source of
+# record for the issue bodies; re-file or re-sync with:
 #
 #     python3 tools/file_issues.py docs/issues/v3.0-sprint-01.yml
 #
-# once a token with issues:write is available (set GITHUB_TOKEN). The script
-# is idempotent: it skips any issue whose exact title already exists.
+# The script is idempotent: it skips any issue whose exact title already exists.
 #
 # Governance: each item here traces to an ADR follow-up (see `adr:`), and
-# docs/TODO.md is generated from this list until the issues are live.
+# docs/TODO.md is a projection of the resulting issues.
 
-repo: mojolab/mojobol
+repo: arjunvenkatraman/mojobol
 default_labels: [v3.0, sprint-1]
 
 issues:
@@ -37,7 +36,7 @@ issues:
     adr: ADR-0006
     agent_tier: haiku
     body: |
-      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0006**. Follow-up to closed #6.
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0006**.
 
       `bin/mojobol-svr-out.py`, `bin/returncalls.py`, and `bin/generatemenureport.py` are still **Python 2** while the engine is Python 3.
 
@@ -94,14 +93,13 @@ issues:
   - id: T6
     title: "[v3.0][TASK] Verboice zip importer (legacy export → native flow)"
     adr: ADR-0003
-    related: [7]
     agent_tier: sonnet
     body: |
-      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0003**. Serves existing #7.
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0003**.
 
       A converter that ingests a Verboice Designer `.zip` and emits one native `flow.yml`, resolving GUID cross-references and extracting prompt text/audio.
 
-      - [ ] `tools/import_verboice.py <flow.zip> -o flow.yml`.
+      - [ ] `tools/import_verboice.py FLOW.zip -o flow.yml`.
       - [ ] Round-trips `samplecallflows/mojobolsamplecallflow.zip` into a valid native flow.
 
       **Acceptance:** imported sample flow validates against the schema and runs in the simulator.
@@ -139,10 +137,9 @@ issues:
   - id: T9
     title: "[v3.0][TASK] Quickstart deploy guide + smoke test"
     adr: ADR-0005
-    related: [8]
     agent_tier: sonnet
     body: |
-      Part of the **v3.0 revival** (Sprint 1 — Essentials). Serves existing #8.
+      Part of the **v3.0 revival** (Sprint 1 — Essentials).
 
       A single minimal path from clone → running a basic call flow, plus a documented live-Asterisk path (hardening deferred).
 

@@ -25,16 +25,18 @@ and nothing actionable lives only in chat or memory (ADR-0001).
    wishlist — it reflects open issues. If you want to do something, file the
    issue first.
 
-## Why the current TODO is "provisional"
+## Seeding issues from YAML
 
-The account used to bootstrap the v3.0 revival has read-only GitHub access, so
-the first wave of issues could not be created programmatically. They are checked
-in at `docs/issues/v3.0-sprint-01.yml`. When a token with `issues:write` is
-available:
+When an ADR produces a wave of follow-ups, capture them in `docs/issues/*.yml`
+and file them in one pass:
 
 ```bash
 GITHUB_TOKEN=... python3 tools/file_issues.py docs/issues/v3.0-sprint-01.yml
 ```
 
-Then regenerate `docs/TODO.md` from the live tracker and drop the "provisional"
-note.
+The script is idempotent (it skips titles that already exist), so the YAML stays
+the source of record for the bodies and can be re-run safely. After filing,
+regenerate `docs/TODO.md` from the live tracker.
+
+The Sprint 1 wave (`docs/issues/v3.0-sprint-01.yml`) is filed as
+`arjunvenkatraman/mojobol` #1–#9.

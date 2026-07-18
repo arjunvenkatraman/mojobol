@@ -11,24 +11,23 @@ known bugs.
 
 ## Sprint backlog
 
-Every task below is an ADR follow-up and is filed (or seeded) as an issue. The
-`Tn` ids match `docs/issues/v3.0-sprint-01.yml`. Nothing here is worked without a
-corresponding issue (see `docs/CONTRIBUTING-workflow.md`).
+Every task below is an ADR follow-up and is filed as an issue. The `Tn` ids match
+`docs/issues/v3.0-sprint-01.yml`. Nothing here is worked without a corresponding
+issue (see `docs/CONTRIBUTING-workflow.md`).
 
 | Task | Issue | ADR | Depends on | Tier |
 |------|-------|-----|-----------|------|
-| T1 Fix runtime bugs (`os.path.isfile`, pandas, `stepCapture`) | seed | 0006 | — | Haiku |
-| T2 Port `bin/` scripts Py2 → Py3 | seed / #6 | 0006 | — | Haiku |
-| T3 De-hardcode paths; config via env/CLI | seed | 0006 | — | Sonnet |
-| T4 Native single-file flow format (schema + docs) | seed | 0002 | — | Sonnet |
-| T5 Native-flow loader in the engine | seed | 0002 | T4 | Sonnet |
-| T6 Verboice zip importer | seed / #7 | 0003 | T4 | Sonnet |
-| T7 Flow simulator / test CLI (no telephony) | seed | 0005 | T5 | Sonnet |
-| T8 LLM authoring guide + system prompt + examples | seed | 0004 | T4 | Sonnet |
-| T9 Quickstart deploy guide + smoke test | seed / #8 | 0005 | T7 | Sonnet |
+| T1 Fix runtime bugs (`os.path.isfile`, pandas, `stepCapture`) | #1 | 0006 | — | Haiku |
+| T2 Port `bin/` scripts Py2 → Py3 | #2 | 0006 | — | Haiku |
+| T3 De-hardcode paths; config via env/CLI | #3 | 0006 | — | Sonnet |
+| T4 Native single-file flow format (schema + docs) | #4 | 0002 | — | Sonnet |
+| T5 Native-flow loader in the engine | #5 | 0002 | T4 | Sonnet |
+| T6 Verboice zip importer | #6 | 0003 | T4 | Sonnet |
+| T7 Flow simulator / test CLI (no telephony) | #8 | 0005 | T5 | Sonnet |
+| T8 LLM authoring guide + system prompt + examples | #7 | 0004 | T4 | Sonnet |
+| T9 Quickstart deploy guide + smoke test | #9 | 0005 | T7 | Sonnet |
 
-"seed" = body is in `docs/issues/v3.0-sprint-01.yml`, awaiting `issues:write`
-access to file (see the note in `docs/adr/README.md`).
+Issue bodies and acceptance criteria live in `docs/issues/v3.0-sprint-01.yml`.
 
 ## Execution order & parallelism (tiered agents — ADR-0007)
 

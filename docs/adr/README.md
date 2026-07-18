@@ -26,12 +26,10 @@ This project follows one strict rule for tracking work:
 This means: ADR → follow-up items → GitHub issues → `docs/TODO.md`. Nothing
 skips a step. See `docs/CONTRIBUTING-workflow.md` for the day-to-day loop.
 
-> **Note (2026-07):** the automation account used during the revival has
-> read-only GitHub access, so the first wave of issues could not be filed
-> programmatically. Their ready-to-file bodies live in `docs/issues/` and can be
-> created with `tools/file_issues.py` once a token with `issues:write` is
-> available. Until then, `docs/TODO.md` is seeded from those same bodies and
-> marked provisional.
+> **Note (2026-07):** the first wave of follow-ups (Sprint 1) is filed as
+> `arjunvenkatraman/mojobol` #1–#9. Their bodies are kept in `docs/issues/` as
+> the source of record and can be re-filed/synced with `tools/file_issues.py`;
+> `docs/TODO.md` is a projection of those live issues.
 
 ## Index
 
