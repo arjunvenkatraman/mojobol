@@ -1,4 +1,0 @@
-Context: callback
-Extension: mojobolcall
-channel: SIP/NUMBER@192.168.5.5
-callerid: NUMBER

@@ -32,7 +32,6 @@ class MojoBolResponder:
 		config.read(configfile)
 		#self.link_for_drive_key=config.get("Server","serverkey")
 		self.directory=config.get("Server","serverdir")
-		self.maildir=config.get("Server","maildir")
 		self.name=config.get("Server","servername")
 		self.playertype=config.get("Server","playertype")
 		self.language=config.get("Server","language")
@@ -252,21 +251,6 @@ class MojoBolCall:
 		self.calldata["call_length"]=calllength
 		self.logger.info("Call ended at %s" %(self.stoptime.strftime("%Y-%b-%d %H:%M:%S")))
 		self.logger.info("Call duration: %s" %(str(calllength.seconds+1)))
-	def compresscallfile(self):
-		try:
-			self.logger.info("Call dir %s" %self.calldir)
-			maildir=os.path.join(self.responder.directory,self.responder.maildir)
-			zipfile=os.path.join(maildir,self.callid+".zip")
-			os.system("zip -r %s %s" %(zipfile, self.calldir))
-			if os.path.isfile("%s" %(zipfile)):
-				self.logger.info("Successfully zipped call file")
-			else:
-				self.logger.info("Could not compress call file")
-
-
-		except Exception as exc:
-			self.logger.error("Could not compress call file: %s" %exc)
-
 	def updatedf(self):
 		"""Append this call's data to a CSV using only the stdlib.
 

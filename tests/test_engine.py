@@ -2,11 +2,10 @@
 post-call bookkeeping without telephony (issues #1 and #3).
 
 We drive real code: build a config, construct MojoBolResponder against the
-in-repo sample flow, then run the call-teardown paths (compresscallfile,
-updatedf) that used to crash on os.isfile / the missing pandas import.
+in-repo sample flow, then run the call-teardown path (updatedf) that used
+to crash on the missing pandas import.
 """
 import os
-import shutil
 
 import pytest
 
@@ -19,7 +18,6 @@ CONFIG_TEMPLATE = """\
 [Server]
 servername = TestServer
 serverdir = {serverdir}
-maildir = mail
 playertype = asterisk
 tts = espeak
 language = en
@@ -41,8 +39,6 @@ def responder(tmp_path):
         CONFIG_TEMPLATE.format(serverdir=serverdir, workflowpath=SAMPLE_FLOW)
     )
     ms = mojobol.MojoBolResponder(str(configfile))
-    # compresscallfile writes the zip here; the engine doesn't create it.
-    os.makedirs(os.path.join(ms.directory, ms.maildir), exist_ok=True)
     return ms
 
 
@@ -73,16 +69,6 @@ def test_updatedf_appends_second_call(responder):
     lines = [ln for ln in open(datafile).read().splitlines() if ln.strip()]
     # header + two data rows
     assert len(lines) == 3
-
-
-@pytest.mark.skipif(shutil.which("zip") is None, reason="zip binary not available")
-def test_compresscallfile_zips_the_call(responder):
-    call = mojobol.MojoBolCall(responder, {"agi_callerid": "9998887777"})
-    call.endcall()
-    call.compresscallfile()
-
-    zippath = os.path.join(responder.directory, responder.maildir, call.callid + ".zip")
-    assert os.path.isfile(zippath), "compresscallfile should produce a zip (os.path.isfile fix)"
 
 
 def test_unknown_callerid_is_tolerated(responder):

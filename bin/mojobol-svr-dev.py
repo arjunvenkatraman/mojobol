@@ -13,5 +13,4 @@ if __name__ == "__main__":
     call = MojoBolCall(ms, env)
     p = call.responder.parse_workflow(call)
     call.endcall()
-    call.compresscallfile()
     call.updatedf()
