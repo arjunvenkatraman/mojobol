@@ -1,10 +1,18 @@
 # ADR-0002: Adopt a single-file native flow format
 
-- Status: Accepted
+- Status: Accepted — amended in part by ADR-0009 (voice step types and
+  `barge_in`) and ADR-0010 (the format must not name a TTS engine)
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T4, T5
-- Related ADRs: ADR-0003, ADR-0004
+- Related ADRs: ADR-0003, ADR-0004, ADR-0009, ADR-0010
+
+> **Amendment note (2026-07):** the step vocabulary and `say:`/`audio:` prompt
+> model below stand, but two details are superseded. ADR-0009 adds a `listen`
+> step type, per-step `barge_in`, and `intent`/`phrases` on `menu` options;
+> ADR-0010 removes the assumption that `say:` renders through espeak/sox
+> specifically. Both amend the schema *before* it freezes under #4, since T5,
+> T6, T7 and T8 all depend on it.
 
 ## Context
 Every call flow mojobol runs today is a Verboice Designer export: a `workflow.yml`

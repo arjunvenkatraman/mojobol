@@ -1,0 +1,303 @@
+# GitHub issue seeds for the v3.0 revival (Sprint 2 — Live voice on the edge).
+#
+# Authored from ADRs 0008–0012. Re-file or re-sync with:
+#
+#     python3 tools/file_issues.py docs/issues/v3.0-sprint-02.yml
+#
+# The script is idempotent: it skips any issue whose exact title already exists.
+#
+# Governance: each item here traces to an ADR follow-up (see `adr:`), and
+# docs/TODO.md is a projection of the resulting issues.
+#
+# NOTE ON ORDER: T13 and T10 are listed first deliberately. Both amend
+# in-flight Sprint 1 work (#4 and #8) and are cheap now, expensive later.
+
+repo: arjunvenkatraman/mojobol
+default_labels: [v3.0, sprint-2]
+
+issues:
+  - id: T13
+    title: "[v3.0][TASK] Extend flow schema for voice: listen, barge_in, intent phrases"
+    adr: ADR-0009
+    agent_tier: opus
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0009**.
+
+      **Amends #4 — schedule before #4 freezes.** T5, T6, T7 and T8 all depend on the
+      schema, so a version that cannot express voice has to be revised a second time and
+      drags four downstream deliverables with it.
+
+      - [ ] `barge_in: true|false` on any step that speaks (default `false`, preserving
+            today's play-to-completion behaviour).
+      - [ ] `menu` options gain `intent` and example `phrases` alongside the DTMF `number`.
+      - [ ] New `listen` step type for open/slot-filling capture (`intents:` and/or `store:`).
+      - [ ] `say:` gains optional `voice:`/`engine:` hints so the format does not name
+            espeak (ADR-0010).
+      - [ ] Update `schemas/flow.schema.json` and `docs/flow-format.md` together.
+
+      **Acceptance:** a dual-mode menu example (speech + DTMF for the same option)
+      validates against the schema.
+
+  - id: T10
+    title: "[v3.0][TASK] Define async, cancellable MojoPlayer interface"
+    adr: ADR-0008
+    agent_tier: opus
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0008**.
+
+      **Amends #8, which is in flight.** ADR-0005 scoped `MojoPlayer` as "play a resource,
+      capture digits, hang up" — blocking and DTMF-only. A streaming voice player cannot
+      implement that shape: blocking `play()` leaves barge-in nowhere to live, and
+      `capture_digits() -> str` has nowhere to put a transcript, confidence or timing.
+
+      - [ ] `async def say(prompt, *, barge_in) -> SayResult` — cancellable; `SayResult`
+            reports whether playback completed or was interrupted, and where.
+      - [ ] `async def listen(spec) -> InputEvent` — tagged union: DTMF press, recognised
+            utterance (transcript + confidence + timing), or timeout.
+      - [ ] `async def record(spec)`, `async def hangup()`.
+      - [ ] Define against *intended* behaviour, not today's AGI behaviour.
+
+      **Acceptance:** the text/stdin simulator backend (#8) and a stub voice backend both
+      implement the interface unmodified.
+
+  - id: T15
+    title: "[v3.0][TASK] Pluggable speech engines; replace espeak with Piper TTS"
+    adr: ADR-0010
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0010**.
+
+      Cheapest perceptible win in the sprint — no architecture change needed, because
+      `say:` already separates prompt text from rendering.
+
+      - [ ] Define `ASREngine`, `TTSEngine` and `VAD` interfaces, resolved from config.
+      - [ ] Implement the Piper TTS backend (ONNX, 8 kHz telephony-appropriate).
+      - [ ] Disk cache keyed on `(text, voice, lang)` — prompts are currently regenerated
+            on every call.
+      - [ ] Retire the inline `os.system("espeak ...")` / `sox` calls in `getAudioFile`.
+      - [ ] `tts =` in `conf/sampleserver.conf` becomes the real selector (currently unread).
+
+      **Acceptance:** the sample flow renders through Piper with no espeak invocation, and a
+      repeated prompt is served from cache.
+
+  - id: T21
+    title: "[v3.0][TASK] Remove mail, batch, outbound and reporting subsystems"
+    adr: ADR-0012
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0012**.
+
+      Scope narrows to telephony interaction + data capture. Removes ~300 lines of
+      untested, deployment-specific batch glue, including shell interpolation of phone
+      numbers.
+
+      - [ ] Delete the mailer files, `bin/mojobol-svr-out.py`, `bin/returncalls.py`,
+            `bin/generatemenureport.py`, `conf/call.skel`.
+      - [ ] Remove `compresscallfile`, the `maildir` config key and the `[MojoMailer]` section.
+      - [ ] Remove the dangling `mojomailman` submodule pointer (no `.gitmodules` entry).
+      - [ ] Drop MySQL/PHP/Apache/`livingdata` from `installmojoboldeps.sh`.
+
+      **Note:** outbound campaign dialing is a real capability being dropped, not dead code.
+      Per ADR-0012 it is re-scoped as a new feature with its own ADR if wanted again.
+
+      **Acceptance:** `pytest` passes with no reference to the removed subsystems outside `docs/`.
+
+  - id: T12
+    title: "[v3.0][TASK] Minimal PJSIP config, AudioSocket dialplan, container SIP/RTP exposure"
+    adr: ADR-0008
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0008**.
+
+      Asterisk becomes a pure SIP/PSTN gateway: answer, hand the channel to AudioSocket,
+      no flow logic in the dialplan.
+
+      - [ ] Replace the 74 KB deprecated `chan_sip` `conf/sip.conf` with minimal PJSIP.
+      - [ ] Dialplan extension that answers and hands off to AudioSocket, kept separate
+            from the legacy AGI extension so the two engines can be A/B'd on live traffic.
+      - [ ] Expose SIP 5060/UDP and the RTP range in the container — currently only
+            5000/2222 are published, so it cannot take a call as shipped (see #9).
+      - [ ] Verify `res_audiosocket`/`chan_audiosocket` is present in the packaged Asterisk.
+
+      **Acceptance:** a softphone can call in and reach an AudioSocket handler.
+
+  - id: T16
+    title: "[v3.0][TASK] Benchmark edge speech models on target hardware"
+    adr: ADR-0010
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0010**.
+
+      The default model profile in ADR-0010 was chosen from **published, largely
+      vendor-sourced benchmarks and is explicitly unverified.** Measure before locking in.
+
+      - [ ] Measure latency, resident footprint and concurrent-call ceiling for the
+            candidate ASR/TTS/VAD models on real target hardware (edge box + laptop).
+      - [ ] Measure WER on real recorded call audio from the existing corpus, not on
+            clean-speech benchmarks.
+      - [ ] **Settle the Indic realtime question specifically** — IndicConformer 600M
+            streaming on laptop CPU is the sprint's main technical risk; determine whether
+            quantisation, a distilled model, or a GPU is required.
+      - [ ] Verify the ADR-0010 budgets: <800 ms mouth-to-ear, <1 GB English / ~2 GB Indic,
+            2–4 concurrent calls on 4 cores.
+      - [ ] Check model licences individually.
+
+      **Acceptance:** measured numbers recorded in the repo; the default profile is set from
+      measurement, and ADR-0010 is updated where reality disagrees.
+
+  - id: T11
+    title: "[v3.0][TASK] AudioSocket player and asyncio per-call driver"
+    adr: ADR-0008
+    agent_tier: opus
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0008**. Depends on T10.
+
+      The media-path pivot. AGI cannot carry this at any level of effort — it is a
+      turn-based control channel with no bidirectional audio.
+
+      - [ ] AudioSocket frame codec (`type(1) + length(2 BE) + payload`; audio, DTMF,
+            terminate, UUID frame types — verify constants against the deployed Asterisk).
+      - [ ] asyncio per-call driver replacing the blocking `while next` loop.
+      - [ ] 8k↔16k resampling both directions; playout pacing/jitter discipline (AudioSocket
+            is TCP, so a stall appears as latency rather than loss).
+      - [ ] Cancellable playback wired to VAD for barge-in.
+      - [ ] **Remove the `time.sleep(1)` between steps in `parse_workflow`** — a second of
+            dead air per step blows the entire latency budget on its own.
+      - [ ] Shared model instances behind a bounded worker pool; reject at answer time past
+            the bound rather than degrading calls in flight.
+
+      **Acceptance:** a live call plays a prompt, is interrupted mid-prompt by the caller
+      speaking, and routes on the recognised utterance.
+
+  - id: T14
+    title: "[v3.0][TASK] Dual-mode input resolution and tiered intent matching"
+    adr: ADR-0009
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0009**.
+      Depends on T13, T11. This is where the sprint goal actually becomes true.
+
+      - [ ] Arm DTMF and speech concurrently on every interactive step; first to resolve
+            wins, with an explicit **tested precedence rule** for near-simultaneous arrival
+            (DTMF wins as the higher-confidence signal).
+      - [ ] Tiered intent matcher: exact/fuzzy keyword → embedding similarity (default) →
+            optional constrained small-LLM classification.
+      - [ ] Configurable confidence threshold; below threshold is a no-match.
+      - [ ] Deterministic no-match ladder: reprompt → DTMF-only wording → latch to
+            DTMF-only after `max_attempts`. Recognition failure must degrade to today's
+            working behaviour, never dead-end the call.
+      - [ ] Optional transcription of `record` steps as an additional captured field.
+
+      **Acceptance:** the same flow can be completed entirely by speech, entirely by
+      keypress, or by a mix; and with ASR forced to fail, the call still completes on DTMF.
+
+  - id: T22
+    title: "[v3.0][TASK] SQLite capture store with export; remove the calllog symlink"
+    adr: ADR-0012
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0012**.
+
+      Capture is currently spread across three mechanisms that disagree: per-call
+      `menuresponsefile-*.yml`, a global `mojobol_data.csv` rewritten in full on every call,
+      and the zip/mail path.
+
+      - [ ] SQLite store (stdlib `sqlite3`, WAL mode) covering calls, turns and captured
+            values; recorded audio stays on disk, referenced by row.
+      - [ ] `tools/export.py` → CSV/JSONL for the existing spreadsheet workflow.
+      - [ ] Retire the per-call YAML response files and the global CSV rewrite.
+      - [ ] **Remove the shared `calllog` symlink** from `MojoBolCall.__init__` — it
+            `os.remove`s and re-`os.symlink`s one global path per call, which is an outright
+            concurrency bug once two calls are served.
+      - [ ] One-time migration path for existing YAML/CSV data, or an explicit decision to
+            leave it in the old format.
+
+      **Acceptance:** two concurrent simulated calls both capture correctly with no
+      cross-talk; export reproduces the old report columns.
+
+  - id: T17
+    title: "[v3.0][TASK] Schema-constrained generation harness for local small models"
+    adr: ADR-0011
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0011**.
+      Depends on T13. **Amends #7.**
+
+      ADR-0004 assumed a large hosted model emitting a whole `flow.yml`. Authoring must now
+      work against the same local small models as the runtime. Constrained decoding makes
+      schema validity *structural* rather than something the model has to remember.
+
+      - [ ] Generate a GBNF / JSON-Schema grammar **from** `schemas/flow.schema.json` so the
+            two cannot drift.
+      - [ ] Run a local small model against it (llama.cpp / Outlines / XGrammar).
+      - [ ] Tokens that would violate the schema must not be sampleable.
+
+      **Acceptance:** a quantised small model emits only schema-valid output across a set of
+      briefs, including ones where an unconstrained run produces invalid YAML.
+
+  - id: T18
+    title: "[v3.0][TASK] Flow-edit operation vocabulary and deterministic applier"
+    adr: ADR-0011
+    agent_tier: opus
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0011**.
+      Depends on T13.
+
+      The model never emits a whole flow — it emits one small typed edit at a time, and
+      deterministic Python owns everything small models reliably get wrong.
+
+      - [ ] Operation vocabulary: `add_play`, `add_menu`, `add_listen`, `add_option`,
+            `set_prompt`, `set_next`, `set_intent_phrases`.
+      - [ ] Applier owns **id generation, `next` wiring, reachability and schema
+            invariants** — the model proposes a local change, the program is the sole author
+            of structure. This eliminates dangling pointers and id collisions by
+            construction rather than catching them afterwards.
+      - [ ] Operations form a natural undo/redo and audit trail.
+
+      **Acceptance:** a scripted operation sequence builds the sample flow; no operation can
+      produce a dangling `next` or a duplicate id.
+
+  - id: T19
+    title: "[v3.0][TASK] Interview-driven authoring CLI with retrieve-and-adapt"
+    adr: ADR-0011
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0011**.
+      Depends on T17, T18.
+
+      Python owns the conversation's control flow; the small model is called only for
+      bounded single-purpose transforms. Small models wander when they drive and behave well
+      as subroutines.
+
+      - [ ] Deterministic question flow (what to ask next, what is already settled, when the
+            flow is complete).
+      - [ ] Narrow model calls: rephrase a rough prompt into natural spoken wording;
+            translate a prompt; **propose per-language intent `phrases`** (the most tedious
+            part of authoring a dual-mode flow); suggest wording that offers both the spoken
+            and DTMF affordance.
+      - [ ] Retrieve-and-adapt: pick the closest flow from `examples/flows/` by embedding
+            similarity (reusing the ADR-0010 encoder, so no extra footprint) as the skeleton.
+      - [ ] Authoring model must **not** become a runtime dependency — it runs on the laptop
+            at design time only.
+
+      **Acceptance:** a non-developer brief produces a valid dual-mode flow end-to-end with
+      no hand-editing of YAML.
+
+  - id: T20
+    title: "[v3.0][TASK] Validate/lint/simulate/repair loop with mandatory human gate"
+    adr: ADR-0011
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 2 — Live voice). Driven by **ADR-0011**.
+      Depends on T18. Reuses ADR-0004's guardrails, which small-model authoring needs more of.
+
+      - [ ] Pipeline, in order: JSON Schema validation → graph lint (dangling `next`,
+            unreachable steps, missing `store` targets, prompts that fail to offer the DTMF
+            fallback per ADR-0009) → simulator dry run (#8).
+      - [ ] On failure, feed back **one specific scoped error**, not the whole document.
+      - [ ] Cap repair attempts at 2–3, then surface to the human.
+      - [ ] **Human review is mandatory, not advisory** — no structural check catches a
+            grammatically valid prompt that says the wrong thing. Nothing auto-deploys.
+
+      **Acceptance:** a deliberately broken flow is caught and repaired within the retry
+      budget; an unrepairable one surfaces to the human instead of looping.

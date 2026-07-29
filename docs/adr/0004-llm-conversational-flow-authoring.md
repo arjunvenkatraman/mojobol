@@ -1,10 +1,17 @@
 # ADR-0004: LLM conversational flow authoring
 
-- Status: Accepted
+- Status: Accepted — mechanism amended by ADR-0011 (local small models)
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T8
-- Related ADRs: ADR-0002, ADR-0003
+- Related ADRs: ADR-0002, ADR-0003, ADR-0011
+
+> **Amendment note (2026-07):** the decision to author flows by conversation
+> with a model, rather than through a GUI, stands. The mechanism below assumes
+> "a capable LLM" — implicitly a large hosted one — emitting a whole `flow.yml`.
+> ADR-0011 replaces that mechanism so authoring runs against the same local
+> small models as the runtime. The validation-and-simulation guardrails
+> described here are kept and relied on more heavily.
 
 ## Context
 Historically, the only way to author a mojobol call flow was the Verboice

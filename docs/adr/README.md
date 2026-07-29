@@ -38,10 +38,30 @@ skips a step. See `docs/CONTRIBUTING-workflow.md` for the day-to-day loop.
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
 | [0002](0002-adopt-single-file-native-flow-format.md) | Adopt a single-file native flow format | Accepted |
 | [0003](0003-keep-verboice-as-import-only-compatibility.md) | Keep Verboice as import-only compatibility | Accepted |
-| [0004](0004-llm-conversational-flow-authoring.md) | LLM conversational flow authoring | Accepted |
-| [0005](0005-simulator-first-testing.md) | Simulator-first testing | Accepted |
+| [0004](0004-llm-conversational-flow-authoring.md) | LLM conversational flow authoring | Accepted (mechanism amended by 0011) |
+| [0005](0005-simulator-first-testing.md) | Simulator-first testing | Accepted (interface amended by 0008) |
 | [0006](0006-python3-only-and-config-via-env.md) | Python 3 only; config via env/CLI | Accepted |
 | [0007](0007-tiered-agent-delivery.md) | Tiered-agent delivery | Accepted |
+| [0008](0008-streaming-media-path-and-async-player.md) | Streaming media path via AudioSocket; async MojoPlayer | Proposed |
+| [0009](0009-dual-mode-dtmf-and-voice-input.md) | Dual-mode input — DTMF *and* speech | Proposed |
+| [0010](0010-edge-speech-model-stack.md) | Edge-hosted small-model speech stack | Proposed |
+| [0011](0011-flow-authoring-with-local-small-models.md) | Flow authoring with local small models | Proposed |
+| [0012](0012-narrow-scope-to-telephony-and-capture.md) | Narrow scope to telephony + data capture | Proposed |
+
+### The live-voice wave (0008–0012)
+
+ADRs 0001–0007 revive mojobol as a **turn-based DTMF IVR**. ADRs 0008–0012 take
+it to **live voice conversation on edge hardware**, while keeping DTMF as a
+first-class input rather than replacing it. They are `Proposed` pending
+sign-off. Two of them are deliberately timed to land *before* in-flight Sprint 1
+work freezes an interface:
+
+- **ADR-0008 amends ADR-0005** — `MojoPlayer` must be async and cancellable, or
+  barge-in has nowhere to live and the extraction has to happen twice (#8 is in
+  flight).
+- **ADR-0009 amends ADR-0002** — the flow schema needs `listen`, `barge_in` and
+  intent `phrases` before it freezes, because T5, T6, T7 and T8 all depend on
+  #4.
 
 ## Writing a new ADR
 

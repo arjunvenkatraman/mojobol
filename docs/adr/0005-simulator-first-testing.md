@@ -1,10 +1,17 @@
 # ADR-0005: Simulator-first testing via a MojoPlayer interface
 
-- Status: Accepted
+- Status: Accepted — `MojoPlayer` interface shape amended by ADR-0008
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T7, T9 (#8)
-- Related ADRs: ADR-0006
+- Related ADRs: ADR-0006, ADR-0008
+
+> **Amendment note (2026-07):** simulator-first testing and the `MojoPlayer`
+> extraction stand. The interface *shape* described below — play a resource,
+> capture digits, hang up — is blocking and DTMF-only, and a streaming voice
+> player cannot implement it. ADR-0008 redefines `MojoPlayer` as async and
+> cancellable before T7 lands, so the extraction happens once rather than
+> twice. The text/stdin backend is unaffected in substance.
 
 ## Context
 Mojobol currently has no test harness. The only way to exercise a flow is to
