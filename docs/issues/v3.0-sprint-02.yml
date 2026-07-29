@@ -1,6 +1,13 @@
 # GitHub issue seeds for the v3.0 revival (Sprint 2 — Live voice on the edge).
 #
-# Authored from ADRs 0008–0012. Re-file or re-sync with:
+# Authored from ADRs 0008–0012 and filed in the tracker as
+# arjunvenkatraman/mojobol #11–#23:
+#
+#   T13 -> #11   T10 -> #12   T15 -> #13   T21 -> #14   T12 -> #15
+#   T16 -> #16   T11 -> #17   T14 -> #18   T22 -> #19   T17 -> #20
+#   T18 -> #21   T19 -> #22   T20 -> #23
+#
+# This file remains the source of record for the bodies. Re-file or re-sync with:
 #
 #     python3 tools/file_issues.py docs/issues/v3.0-sprint-02.yml
 #

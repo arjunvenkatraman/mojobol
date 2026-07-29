@@ -15,10 +15,10 @@ place.
 **T13 and T10 should be scheduled before the rest of this sprint, and before the
 Sprint 1 tasks they touch land.** Both are cheap now and expensive later:
 
-- **T13 (flow schema)** — #4 is still `todo`, and **T5, T6, T7 and T8 all depend
-  on it**. A schema without `listen`/`barge_in`/`phrases` has to be versioned a
-  second time, dragging four downstream deliverables with it.
-- **T10 (async `MojoPlayer`)** — #8 is *in flight*. If the interface lands
+- **T13 / #11 (flow schema)** — #4 is still `todo`, and **T5, T6, T7 and T8 all
+  depend on it**. A schema without `listen`/`barge_in`/`phrases` has to be
+  versioned a second time, dragging four downstream deliverables with it.
+- **T10 / #12 (async `MojoPlayer`)** — #8 is *in flight*. If the interface lands
   blocking and DTMF-shaped, barge-in has nowhere to live and the extraction is
   done twice.
 
@@ -26,21 +26,21 @@ Sprint 1 tasks they touch land.** Both are cheap now and expensive later:
 
 Per ADR-0001 governance, each task below is an ADR follow-up filed as an issue.
 
-| Task | ADR | Depends on | Tier |
-|------|-----|-----------|------|
-| T13 Extend flow schema: `listen`, `barge_in`, intent `phrases`, `voice:` | 0009 | — | Opus |
-| T10 Async, cancellable `MojoPlayer` interface | 0008 | — | Opus |
-| T15 `ASREngine`/`TTSEngine`/`VAD` interfaces; espeak → Piper | 0010 | — | Sonnet |
-| T21 Remove mail/batch/outbound subsystems | 0012 | — | Sonnet |
-| T12 Minimal PJSIP + dialplan + container SIP/RTP exposure | 0008 | — | Sonnet |
-| T16 Benchmark edge models on target hardware | 0010 | T15 | Sonnet |
-| T11 `AudioSocketPlayer` + asyncio per-call driver | 0008 | T10 | Opus + Sonnet |
-| T14 Dual-mode input resolution + tiered intent matcher + fallback ladder | 0009 | T13, T11 | Sonnet |
-| T22 SQLite capture store + export; drop the `calllog` symlink | 0012 | — | Sonnet |
-| T17 Schema-constrained generation harness | 0011 | T13 | Sonnet |
-| T18 Flow-edit operation vocabulary + deterministic applier | 0011 | T13 | Opus |
-| T19 Interview-driven authoring CLI + retrieve-and-adapt | 0011 | T17, T18 | Sonnet |
-| T20 Validate/lint/simulate/repair loop with human gate | 0011 | T18 | Sonnet |
+| Task | Issue | ADR | Depends on | Tier |
+|------|-------|-----|-----------|------|
+| T13 Extend flow schema: `listen`, `barge_in`, intent `phrases`, `voice:` | [#11](https://github.com/arjunvenkatraman/mojobol/issues/11) | 0009 | — | Opus |
+| T10 Async, cancellable `MojoPlayer` interface | [#12](https://github.com/arjunvenkatraman/mojobol/issues/12) | 0008 | — | Opus |
+| T15 `ASREngine`/`TTSEngine`/`VAD` interfaces; espeak → Piper | [#13](https://github.com/arjunvenkatraman/mojobol/issues/13) | 0010 | — | Sonnet |
+| T21 Remove mail/batch/outbound subsystems | [#14](https://github.com/arjunvenkatraman/mojobol/issues/14) | 0012 | — | Sonnet |
+| T12 Minimal PJSIP + dialplan + container SIP/RTP exposure | [#15](https://github.com/arjunvenkatraman/mojobol/issues/15) | 0008 | — | Sonnet |
+| T16 Benchmark edge models on target hardware | [#16](https://github.com/arjunvenkatraman/mojobol/issues/16) | 0010 | #13 | Sonnet |
+| T11 `AudioSocketPlayer` + asyncio per-call driver | [#17](https://github.com/arjunvenkatraman/mojobol/issues/17) | 0008 | #12 | Opus + Sonnet |
+| T14 Dual-mode input resolution + tiered intent matcher + fallback ladder | [#18](https://github.com/arjunvenkatraman/mojobol/issues/18) | 0009 | #11, #17 | Sonnet |
+| T22 SQLite capture store + export; drop the `calllog` symlink | [#19](https://github.com/arjunvenkatraman/mojobol/issues/19) | 0012 | — | Sonnet |
+| T17 Schema-constrained generation harness | [#20](https://github.com/arjunvenkatraman/mojobol/issues/20) | 0011 | #11 | Sonnet |
+| T18 Flow-edit operation vocabulary + deterministic applier | [#21](https://github.com/arjunvenkatraman/mojobol/issues/21) | 0011 | #11 | Opus |
+| T19 Interview-driven authoring CLI + retrieve-and-adapt | [#22](https://github.com/arjunvenkatraman/mojobol/issues/22) | 0011 | #20, #21 | Sonnet |
+| T20 Validate/lint/simulate/repair loop with human gate | [#23](https://github.com/arjunvenkatraman/mojobol/issues/23) | 0011 | #21 | Sonnet |
 
 ## Execution order & parallelism (tiered agents — ADR-0007)
 
