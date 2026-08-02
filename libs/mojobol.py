@@ -1,10 +1,29 @@
-import os,sys,configparser,yaml,pprint,time, datetime
-sys.path.append("/opt/mojobol/libs")
+import os,sys,csv,configparser,yaml,pprint,time, datetime
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent))
 from mojoasteriskplayer import *
 import logging
 #from pydrive.auth import GoogleAuth
 #:from pydrive.drive import GoogleDrive
-# import pandas
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def default_config_path():
+	"""Path to the in-repo sample config, resolved relative to this file."""
+	return str(REPO_ROOT / "conf" / "sampleserver.conf")
+
+
+def resolve_config_path(cli_arg=None):
+	"""Resolve the deployment config path.
+
+	Precedence: explicit CLI argument > ``MOJOBOL_CONFIG`` env var > the
+	in-repo sample config. Lets the engine run from a fresh clone at any
+	path with no source edits (ADR-0006).
+	"""
+	if cli_arg:
+		return cli_arg
+	return os.environ.get("MOJOBOL_CONFIG", default_config_path())
 
 
 class MojoBolResponder:
@@ -33,7 +52,7 @@ class MojoBolResponder:
 		if os.path.isdir(self.directory)==False:
 			try:
 				os.mkdir(self.directory)
-			except:
+			except OSError:
 				print("Could not create server directory")
 		logpath=os.path.dirname(os.path.join(self.directory,self.logfile))
 		if os.path.isdir(logpath)==False:
@@ -42,13 +61,13 @@ class MojoBolResponder:
 				f=open(os.path.join(self.directory,self.logfile),"w")
 				f.write("Starting Logfile")
 				f.close()
-			except:
+			except OSError:
 				print("Could not create server logfile")
 		callpath=os.path.join(self.directory,self.callsdir)
 		if os.path.isdir(callpath)==False:
 			try:
 				os.mkdir(callpath)
-			except:
+			except OSError:
 				print("Could not create server call directory")
 				
 		fh = logging.FileHandler(os.path.join(self.directory,self.logfile))
@@ -173,7 +192,7 @@ class MojoBolCall:
 		self.calldata={}
 		try:
 			self.callerid = env['agi_callerid']
-		except:
+		except KeyError:
 			self.callerid="Unknown"
 		self.calldata["caller_id"]=self.callerid
 		self.responder=responder
@@ -194,7 +213,7 @@ class MojoBolCall:
 			print("Trying to make call directory", self.calldir)
 			try:
 				os.mkdir(self.calldir)
-			except:
+			except OSError:
 				print("Could not create call directory")
 		self.logfile=os.path.join(self.calldir,"log",self.callid+".log")
 		logpath=os.path.dirname(os.path.join(self.calldir,self.logfile))
@@ -204,7 +223,7 @@ class MojoBolCall:
 				f=open(os.path.join(self.calldir,self.logfile),"w")
 				f.write("Starting Logfile")
 				f.close()
-			except:
+			except OSError:
 				print("Could not create call logfile")
 				
 		fh = logging.FileHandler(os.path.join(self.calldir,self.logfile))
@@ -239,25 +258,45 @@ class MojoBolCall:
 			maildir=os.path.join(self.responder.directory,self.responder.maildir)
 			zipfile=os.path.join(maildir,self.callid+".zip")
 			os.system("zip -r %s %s" %(zipfile, self.calldir))
-			if os.isfile("%s" %(zipfile)):
+			if os.path.isfile("%s" %(zipfile)):
 				self.logger.info("Successfully zipped call file")
 			else:
 				self.logger.info("Could not compress call file")
-			
-				
-		except:
-			self.logger.error("Could not compress call file")
+
+
+		except Exception as exc:
+			self.logger.error("Could not compress call file: %s" %exc)
 
 	def updatedf(self):
-		if "mojobol_data.csv" in os.listdir("/opt"):
-			df=pandas.read_csv("/opt/mojobol_data.csv")
-			self.logger.info(self.calldata)	
-			df=df.append(self.calldata,ignore_index=True)	
-			df.to_csv("/opt/mojobol_data.csv",index=False)
-		else:
+		"""Append this call's data to a CSV using only the stdlib.
+
+		Replaces the former pandas dependency (never imported, so this
+		crashed on every call) and writes next to the server directory
+		instead of a hardcoded /opt path (ADR-0006).
+		"""
+		datafile=os.path.join(self.responder.directory,"mojobol_data.csv")
+		row={k:str(v) for k,v in self.calldata.items()}
+		rows=[]
+		fieldnames=[]
+		if os.path.isfile(datafile):
+			try:
+				with open(datafile,newline="") as fh:
+					reader=csv.DictReader(fh)
+					fieldnames=list(reader.fieldnames or [])
+					rows=list(reader)
+			except OSError as exc:
+				self.logger.error("Could not read data file: %s" %exc)
+		for key in row:
+			if key not in fieldnames:
+				fieldnames.append(key)
+		rows.append(row)
+		try:
+			with open(datafile,"w",newline="") as fh:
+				writer=csv.DictWriter(fh,fieldnames=fieldnames)
+				writer.writeheader()
+				writer.writerows(rows)
 			self.logger.info(self.calldata)
-			df=pandas.DataFrame()
-			df=df.append(self.calldata,ignore_index=True)
-			df.to_csv("/opt/mojobol_data.csv",index=False)
+		except OSError as exc:
+			self.logger.error("Could not update data file: %s" %exc)
 
 		

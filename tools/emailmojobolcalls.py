@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys,os
 sys.path.append("/opt/mojomailman/mojomail")
@@ -16,18 +16,18 @@ calls=os.listdir(callsdir)
 #print calls
 messager=MojoMessager("/opt/voh/mail.conf")
 for call in calls:
-	
+
 	subdict=messager.getsubdict()
 	bodydict=messager.getbodydict()
 	payload=""
-	print call
+	print(call)
 	if resp.name in call:
 		callvals=call.split(resp.name)
 		userid=callvals[0].rstrip("-")
 		subdict['USER']=userid
 		ts=callvals[1].lstrip("-")
 		timestamp=datetime.strptime(ts,resp.tsformat)
-		print timestamp
+		print(timestamp)
 		subdict['TIMESTAMP']=timestamp.strftime("%Y-%b-%d %H:%M:%S")
 		subdict['MOJOMAIL']=resp.name
 		subdict['TYPE']="CallRecord"
@@ -36,17 +36,17 @@ for call in calls:
 			for filename in files:
 				if "callfile" in filename:
 					payload=os.path.join(callsdir,call,filename)
-					print "Payload",payload
+					print("Payload",payload)
 					subdict['PAYLOAD']=filename
 				if "log" in filename:
 					logfile=os.listdir(os.path.join(callsdir,call,filename))
-					print "Logfile",logfile[0]
-					f=open(os.path.join(callsdir,call,filename,logfile[0]),"rb")
+					print("Logfile",logfile[0])
+					f=open(os.path.join(callsdir,call,filename,logfile[0]),"r")
 					bodydict['$CONTENT']+="\nCall Log\n"+f.read()
-					f.close()	
+					f.close()
 				if "menuresponse" in filename:
-					print "Menuresponses",filename
-					f=open(os.path.join(callsdir,call,filename),"rb")
+					print("Menuresponses",filename)
+					f=open(os.path.join(callsdir,call,filename),"r")
 					bodydict['$CONTENT']+="\nMenu Responses\n"+f.read()
 					f.close()
 			if payload=="":
@@ -60,5 +60,4 @@ for call in calls:
 				f.write(datetime.now().strftime("%Y-%b-%d %H:%M:%S")+"\n")
 				f.close()
 			else:
-				print "Already mailed"
-		
+				print("Already mailed")

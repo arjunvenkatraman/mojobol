@@ -1,0 +1,150 @@
+# GitHub issue seeds for the v3.0 revival (Sprint 1 — Essentials).
+#
+# These were authored from the ADRs in docs/adr/ and are now filed in the
+# tracker (arjunvenkatraman/mojobol #1–#9). This file remains the source of
+# record for the issue bodies; re-file or re-sync with:
+#
+#     python3 tools/file_issues.py docs/issues/v3.0-sprint-01.yml
+#
+# The script is idempotent: it skips any issue whose exact title already exists.
+#
+# Governance: each item here traces to an ADR follow-up (see `adr:`), and
+# docs/TODO.md is a projection of the resulting issues.
+
+repo: arjunvenkatraman/mojobol
+default_labels: [v3.0, sprint-1]
+
+issues:
+  - id: T1
+    title: "[v3.0][TASK] Fix runtime bugs (os.path.isfile, pandas dep, stepCapture)"
+    adr: ADR-0006
+    agent_tier: haiku
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0006**.
+
+      Concrete defects found reading the code:
+
+      - [ ] `libs/mojobol.py` `compresscallfile` calls `os.isfile` — should be `os.path.isfile`. The success/failure check always throws.
+      - [ ] `libs/mojobol.py` `updatedf` uses `pandas`, but pandas is never imported (commented out) and is not a dependency. `bin/mojobol-svr.py` calls it on every call → crash. Remove pandas or make it optional; capture with stdlib.
+      - [ ] `libs/mojoasteriskplayer.py` `stepCapture` references `stepresources` before it is defined — dead/broken method. Remove or fix (the live path in `executeStep` is fine).
+      - [ ] Replace broad bare `except:` blocks that swallow real errors.
+
+      **Acceptance:** the example flow runs through the engine (via the simulator, T7) without raising on these paths.
+
+  - id: T2
+    title: "[v3.0][TASK] Port bin/ scripts from Python 2 to Python 3"
+    adr: ADR-0006
+    agent_tier: haiku
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0006**.
+
+      `bin/mojobol-svr-out.py`, `bin/returncalls.py`, and `bin/generatemenureport.py` are still **Python 2** while the engine is Python 3.
+
+      - [ ] Port all `bin/*.py` and `tools/*` to Python 3 (`print()`, dict iteration, `except ... as`, str/bytes).
+      - [ ] Add a smoke import/parse check so a stale Py2 file fails CI, not a live call.
+
+      **Acceptance:** every script parses under Python 3; `2to3 -f print` reports no changes.
+
+  - id: T3
+    title: "[v3.0][TASK] De-hardcode paths; load config via env var / CLI arg"
+    adr: ADR-0006
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0006**.
+
+      Absolute paths are baked in: `sys.path.append('/opt/mojobol/...')`; AGI entrypoints point at `/opt/shwaasivr/voh.conf`, `/opt/voh/voh.conf` (`bin/mojobol-svr.py`).
+
+      - [ ] Resolve repo root relative to the script (`Path(__file__).resolve().parents[1]`).
+      - [ ] Read deployment config from `MOJOBOL_CONFIG` env var or a `--config` CLI arg, with a sensible default.
+      - [ ] Remove `chmod a+rwx -R /opt/mojobol` from `setupasterisk.sh`.
+
+      **Acceptance:** engine + simulator run from a fresh clone at any path with no source edits.
+
+  - id: T4
+    title: "[v3.0][TASK] Define native single-file flow format (schema + docs)"
+    adr: ADR-0002
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0002**.
+
+      Replace the GUID-heavy 3-files-per-prompt Verboice export with ONE human- and LLM-authorable YAML file. Steps carry inline `say:` text (espeak TTS) or an `audio:` filename. Supports `play`, `capture`, `menu`, `record`.
+
+      - [ ] `docs/flow-format.md` with the full spec and a worked example.
+      - [ ] `schemas/flow.schema.json` (JSON Schema) for validation.
+      - [ ] `examples/flows/health-survey.yml`.
+
+      **Acceptance:** the example flow validates against the schema.
+
+  - id: T5
+    title: "[v3.0][TASK] Add native-flow loader to the engine"
+    adr: ADR-0002
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0002**. Depends on T4.
+
+      Teach the engine to load and execute the native single-file flow directly (alongside the Verboice loader in `libs/mojobol.py`). The `while next` loop and `executeStep` dispatch stay; only resource resolution changes (inline `say:`/`audio:` instead of GUID lookups).
+
+      - [ ] `load_flow(path)` returning the step-dict shape `executeStep` expects.
+      - [ ] Route inline `say:` through the existing espeak/sox TTS path (`getAudioFile`).
+      - [ ] Keep the Verboice loader working.
+
+      **Acceptance:** the example native flow runs end-to-end in the simulator (T7).
+
+  - id: T6
+    title: "[v3.0][TASK] Verboice zip importer (legacy export → native flow)"
+    adr: ADR-0003
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0003**.
+
+      A converter that ingests a Verboice Designer `.zip` and emits one native `flow.yml`, resolving GUID cross-references and extracting prompt text/audio.
+
+      - [ ] `tools/import_verboice.py FLOW.zip -o flow.yml`.
+      - [ ] Round-trips `samplecallflows/mojobolsamplecallflow.zip` into a valid native flow.
+
+      **Acceptance:** imported sample flow validates against the schema and runs in the simulator.
+
+  - id: T7
+    title: "[v3.0][TASK] Flow simulator / test CLI (no telephony)"
+    adr: ADR-0005
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0005**. Highest-leverage dev feature.
+
+      A CLI that loads a flow and walks it with scripted or interactive keypresses, printing the traversed path and captured values — **no Asterisk required**. Implemented via a `MojoPlayer` interface with a text/stdin backend replacing `MojoAsteriskPlayer`.
+
+      - [ ] `python3 -m mojobol.simulate flow.yml` (interactive) and `--input 1,2,#` (scripted).
+      - [ ] Prints step-by-step trace: prompt spoken, key pressed, branch taken, stored vars.
+      - [ ] Non-zero exit on unreachable steps / dangling `next` pointers (basic linting).
+
+      **Acceptance:** simulating the example flow prints a correct traversal; a dangling `next` fails linting.
+
+  - id: T8
+    title: "[v3.0][TASK] LLM conversational flow-authoring guide + system prompt + examples"
+    adr: ADR-0004
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials). Driven by **ADR-0004**.
+
+      Users describe an IVR in conversation with a capable LLM and get a valid native `flow.yml`. Ship the reusable prompt + docs.
+
+      - [ ] `docs/authoring-with-an-llm.md`: conversation → runnable flow → validate → simulate.
+      - [ ] `prompts/flow-author.system.md`: a system prompt embedding the format spec + schema, instructing the model to emit only valid native YAML.
+      - [ ] 2–3 example transcripts (brief → emitted flow) that pass the validator.
+
+      **Acceptance:** feeding the system prompt + a plain-English brief to a model yields a flow that validates and simulates.
+
+  - id: T9
+    title: "[v3.0][TASK] Quickstart deploy guide + smoke test"
+    adr: ADR-0005
+    agent_tier: sonnet
+    body: |
+      Part of the **v3.0 revival** (Sprint 1 — Essentials).
+
+      A single minimal path from clone → running a basic call flow, plus a documented live-Asterisk path (hardening deferred).
+
+      - [ ] `docs/quickstart.md`: clone → deps → author/import a flow → **simulate it** (no PBX). Optional "go live" section (Asterisk + SIP/GSM).
+      - [ ] Docker notes for real telephony: expose SIP 5060/UDP + RTP range, host-networking caveat (currently only 5000/2222 exposed; `setupasterisk.sh` commented out).
+      - [ ] `make smoke` / script running the simulator on the example flow as a CI-able smoke test.
+
+      **Acceptance:** a new user reaches a working simulated call flow using only this doc.
