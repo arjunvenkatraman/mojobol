@@ -1,10 +1,10 @@
-# ADR-0007: Tiered-agent delivery model for the v3.0 revival
+# ADR-007: Tiered-agent delivery model for the v3.0 revival
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: None — process ADR.
-- Related ADRs: ADR-0005, ADR-0006
+- Related ADRs: ADR-005, ADR-006
 
 ## Context
 The v3.0 revival spans work of very different character: architectural
@@ -29,7 +29,7 @@ Adopt a tiered-agent delivery process for this revival:
 - **Sonnet/Haiku (worker tier)**: mechanical, well-specified tasks dispatched
   in parallel once Opus has scoped them precisely — Python 2 to 3 ports of
   individual `bin/` scripts, search-and-replace of hard-coded paths once the
-  replacement pattern is fixed, fixing the isolated bugs listed in ADR-0006
+  replacement pattern is fixed, fixing the isolated bugs listed in ADR-006
   (`os.isfile`, the `stepCapture` dead code) against an exact diff spec, and
   first drafts of documentation (quickstart guide, ADR follow-up text) for
   Opus to edit rather than write from scratch.

@@ -1,10 +1,10 @@
-# ADR-0002: Adopt a single-file native flow format
+# ADR-002: Adopt a single-file native flow format
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T4, T5
-- Related ADRs: ADR-0003, ADR-0004
+- Related ADRs: ADR-003, ADR-004
 
 ## Context
 Every call flow mojobol runs today is a Verboice Designer export: a `workflow.yml`
@@ -27,7 +27,7 @@ something designed for humans:
   an LLM — hand-editing risks a typo that silently breaks a cross-reference
   (the engine has no schema validation, so this fails at call time).
 - Authoring requires the Verboice Designer GUI, which we no longer want to
-  depend on for new flows (see ADR-0004).
+  depend on for new flows (see ADR-004).
 
 We want flows that a person can read top-to-bottom in one file, that an LLM
 can emit directly from a conversation, and that stay compatible with the
@@ -55,7 +55,7 @@ GUID indirection.
 ### Positive
 - One file per flow: the whole call flow, including every prompt's actual
   wording, is readable top to bottom without cross-referencing other files.
-- Directly authorable by hand or by an LLM (see ADR-0004) — no Designer GUI
+- Directly authorable by hand or by an LLM (see ADR-004) — no Designer GUI
   round-trip required.
 - Same step-type vocabulary as today, so the runtime change is a new loader
   (T5) rather than a rewrite of `executeStep`'s dispatch logic.
@@ -66,7 +66,7 @@ GUID indirection.
 - A new format needs its own schema and documentation (T4) and its own
   loader in the engine (T5); until both land, native flows can't run.
 - Existing Verboice exports don't disappear — they need a conversion path
-  (handled separately, see ADR-0003) or they become dead weight.
+  (handled separately, see ADR-003) or they become dead weight.
 - Inline `say:` text coupled with `language` puts the burden of managing
   multiple languages within a single flow file, versus Verboice's separate
   `localized_resource` files per language; multi-language flows need a

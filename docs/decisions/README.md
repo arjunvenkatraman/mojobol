@@ -35,28 +35,33 @@ skips a step. See `docs/CONTRIBUTING-workflow.md` for the day-to-day loop.
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
-| [0002](0002-adopt-single-file-native-flow-format.md) | Adopt a single-file native flow format | Accepted |
-| [0003](0003-keep-verboice-as-import-only-compatibility.md) | Keep Verboice as import-only compatibility | Accepted |
-| [0004](0004-llm-conversational-flow-authoring.md) | LLM conversational flow authoring | Accepted |
-| [0005](0005-simulator-first-testing.md) | Simulator-first testing | Accepted |
-| [0006](0006-python3-only-and-config-via-env.md) | Python 3 only; config via env/CLI | Accepted |
-| [0007](0007-tiered-agent-delivery.md) | Tiered-agent delivery | Accepted |
+| [ADR-001](ADR-001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
+| [ADR-002](ADR-002-adopt-single-file-native-flow-format.md) | Adopt a single-file native flow format | Accepted |
+| [ADR-003](ADR-003-keep-verboice-as-import-only-compatibility.md) | Keep Verboice as import-only compatibility | Accepted |
+| [ADR-004](ADR-004-llm-conversational-flow-authoring.md) | LLM conversational flow authoring | Accepted |
+| [ADR-005](ADR-005-simulator-first-testing.md) | Simulator-first testing | Accepted |
+| [ADR-006](ADR-006-python3-only-and-config-via-env.md) | Python 3 only; config via env/CLI | Accepted |
+| [ADR-007](ADR-007-tiered-agent-delivery.md) | Tiered-agent delivery | Accepted |
 
 ## Writing a new ADR
 
-Copy the template below into `NNNN-short-title.md` (next number), fill it in,
+File names follow the `/xpal-src` workspace convention:
+`ADR-NNN-kebab-title.md`, where `NNN` is the next number, zero-padded to three
+digits. (These records lived in `docs/adr/` as `NNNN-kebab-title.md` until the
+move to `docs/decisions/`; the numbers were preserved, only re-padded.)
+
+Copy the template below into `ADR-NNN-short-title.md` (next number), fill it in,
 open a PR, and add its follow-up items to `docs/issues/` (or file them directly
 when you have write access).
 
 ```
-# ADR-NNNN: <Title>
+# ADR-NNN: <Title>
 
-- Status: Proposed | Accepted | Superseded by ADR-XXXX
+- Status: Proposed | Accepted | Superseded by ADR-XXX
 - Date: YYYY-MM-DD
 - Deciders: <names>
 - Related issues: <#N ...>
-- Related ADRs: <ADR-XXXX ...>
+- Related ADRs: <ADR-XXX ...>
 
 ## Context
 ## Decision

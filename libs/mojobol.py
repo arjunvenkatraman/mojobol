@@ -19,7 +19,7 @@ def resolve_config_path(cli_arg=None):
 
 	Precedence: explicit CLI argument > ``MOJOBOL_CONFIG`` env var > the
 	in-repo sample config. Lets the engine run from a fresh clone at any
-	path with no source edits (ADR-0006).
+	path with no source edits (ADR-006).
 	"""
 	if cli_arg:
 		return cli_arg
@@ -272,7 +272,7 @@ class MojoBolCall:
 
 		Replaces the former pandas dependency (never imported, so this
 		crashed on every call) and writes next to the server directory
-		instead of a hardcoded /opt path (ADR-0006).
+		instead of a hardcoded /opt path (ADR-006).
 		"""
 		datafile=os.path.join(self.responder.directory,"mojobol_data.csv")
 		row={k:str(v) for k,v in self.calldata.items()}

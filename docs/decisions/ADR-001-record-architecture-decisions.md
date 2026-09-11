@@ -1,4 +1,4 @@
-# ADR-0001: Record architecture decisions
+# ADR-001: Record architecture decisions
 
 - Status: Accepted
 - Date: 2026-07-18
@@ -19,9 +19,9 @@ letting "we should also…" items scatter across commit messages and memory.
 
 ## Decision
 
-We will keep Architecture Decision Records in `docs/adr/`, one Markdown file per
+We will keep Architecture Decision Records in `docs/decisions/`, one Markdown file per
 decision, numbered sequentially, using the Nygard-lite template documented in
-`docs/adr/README.md`.
+`docs/decisions/README.md`.
 
 We adopt one governance rule for the whole project:
 
@@ -36,7 +36,7 @@ We adopt one governance rule for the whole project:
 - The "why" behind v3.0 is durable and reviewable in-repo.
 - There is a single, mechanical path from decision → issue → TODO, so nothing
   actionable lives only in someone's head.
-- New contributors can read `docs/adr/` top-to-bottom to understand the design.
+- New contributors can read `docs/decisions/` top-to-bottom to understand the design.
 
 ### Negative / Trade-offs
 - Small overhead: each significant decision needs a short write-up, and each

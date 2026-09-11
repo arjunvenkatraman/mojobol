@@ -17,19 +17,19 @@ issue (see `docs/CONTRIBUTING-workflow.md`).
 
 | Task | Issue | ADR | Depends on | Tier |
 |------|-------|-----|-----------|------|
-| T1 Fix runtime bugs (`os.path.isfile`, pandas, `stepCapture`) | #1 | 0006 | — | Haiku |
-| T2 Port `bin/` scripts Py2 → Py3 | #2 | 0006 | — | Haiku |
-| T3 De-hardcode paths; config via env/CLI | #3 | 0006 | — | Sonnet |
-| T4 Native single-file flow format (schema + docs) | #4 | 0002 | — | Sonnet |
-| T5 Native-flow loader in the engine | #5 | 0002 | T4 | Sonnet |
-| T6 Verboice zip importer | #6 | 0003 | T4 | Sonnet |
-| T7 Flow simulator / test CLI (no telephony) | #8 | 0005 | T5 | Sonnet |
-| T8 LLM authoring guide + system prompt + examples | #7 | 0004 | T4 | Sonnet |
-| T9 Quickstart deploy guide + smoke test | #9 | 0005 | T7 | Sonnet |
+| T1 Fix runtime bugs (`os.path.isfile`, pandas, `stepCapture`) | #1 | 006 | — | Haiku |
+| T2 Port `bin/` scripts Py2 → Py3 | #2 | 006 | — | Haiku |
+| T3 De-hardcode paths; config via env/CLI | #3 | 006 | — | Sonnet |
+| T4 Native single-file flow format (schema + docs) | #4 | 002 | — | Sonnet |
+| T5 Native-flow loader in the engine | #5 | 002 | T4 | Sonnet |
+| T6 Verboice zip importer | #6 | 003 | T4 | Sonnet |
+| T7 Flow simulator / test CLI (no telephony) | #8 | 005 | T5 | Sonnet |
+| T8 LLM authoring guide + system prompt + examples | #7 | 004 | T4 | Sonnet |
+| T9 Quickstart deploy guide + smoke test | #9 | 005 | T7 | Sonnet |
 
 Issue bodies and acceptance criteria live in `docs/issues/v3.0-sprint-01.yml`.
 
-## Execution order & parallelism (tiered agents — ADR-0007)
+## Execution order & parallelism (tiered agents — ADR-007)
 
 The Opus orchestrator owns architecture, integration, and review. Cheaper
 Sonnet/Haiku agents do the well-specified mechanical work in parallel. Suggested

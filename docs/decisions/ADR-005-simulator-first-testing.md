@@ -1,10 +1,10 @@
-# ADR-0005: Simulator-first testing via a MojoPlayer interface
+# ADR-005: Simulator-first testing via a MojoPlayer interface
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T7, T9 (#8)
-- Related ADRs: ADR-0006
+- Related ADRs: ADR-006
 
 ## Context
 Mojobol currently has no test harness. The only way to exercise a flow is to
@@ -52,7 +52,7 @@ later sprint and is not blocked on this work.
 - The simulator cannot catch AGI/channel-specific defects (timing, audio
   encoding, SIP signaling) — those still require a real or emulated Asterisk
   call, which remains out of scope for this ADR.
-- Some `MojoAsteriskPlayer` methods are currently broken (see ADR-0006,
+- Some `MojoAsteriskPlayer` methods are currently broken (see ADR-006,
   `stepCapture`'s `stepresources` bug); the interface must be defined against
   the *intended* behavior, not the current buggy implementation.
 

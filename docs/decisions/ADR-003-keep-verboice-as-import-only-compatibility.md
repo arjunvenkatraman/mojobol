@@ -1,13 +1,13 @@
-# ADR-0003: Keep Verboice as import-only compatibility
+# ADR-003: Keep Verboice as import-only compatibility
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: #7, T6
-- Related ADRs: ADR-0002
+- Related ADRs: ADR-002
 
 ## Context
-ADR-0002 adopts a single-file native `flow.yml` format and stops using the
+ADR-002 adopts a single-file native `flow.yml` format and stops using the
 InSTEDD Verboice Designer for authoring new flows. That leaves a body of
 existing flows — `workflow.yml` plus GUID-named `resource*.yml` and
 `localized_resource*.yml` files, such as the ones under
@@ -24,14 +24,14 @@ Verboice support is retained strictly as a one-way, one-time import path,
 not as an ongoing authoring format:
 - `tools/import_verboice.py` will read a legacy Verboice Designer `.zip`
   export (the `workflow.yml` + `resource*.yml` + `localized_resource*.yml`
-  bundle) and emit an equivalent native `flow.yml` (per ADR-0002), resolving
+  bundle) and emit an equivalent native `flow.yml` (per ADR-002), resolving
   every GUID cross-reference into inline `say:`/`audio:` content on the
   corresponding step.
 - No new mojobol tooling will read Verboice's multi-file format directly at
   call time; once imported, a flow is native and is maintained as native
   going forward.
 - The Verboice Designer GUI itself is not part of the v3.0 authoring
-  workflow (see ADR-0004) — it is only a source format the importer
+  workflow (see ADR-004) — it is only a source format the importer
   understands.
 - This importer is the resolution for GitHub issue #7.
 
@@ -52,7 +52,7 @@ not as an ongoing authoring format:
 - Converted flows will need a manual review pass — the importer produces a
   structurally valid `flow.yml`, but inlined `say:` text pulled from
   `localized_resource*.yml` files may need cleanup, and multi-language
-  Verboice exports need to be reconciled with however ADR-0002 ends up
+  Verboice exports need to be reconciled with however ADR-002 ends up
   handling multi-language natively (tracked under T4).
 - Once a flow is imported, its native and Verboice versions can drift; there
   is no round-trip or sync back to Verboice, so import is a one-way door.
@@ -60,5 +60,5 @@ not as an ongoing authoring format:
 ## Follow-up work (to be filed as issues)
 - [ ] T6 — Build `tools/import_verboice.py`: parse a Verboice `.zip` export
       (workflow + resource + localized_resource files), resolve GUID
-      cross-references, and emit a native `flow.yml` per ADR-0002 (resolves
+      cross-references, and emit a native `flow.yml` per ADR-002 (resolves
       #7).

@@ -1,16 +1,16 @@
-# ADR-0004: LLM conversational flow authoring
+# ADR-004: LLM conversational flow authoring
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T8
-- Related ADRs: ADR-0002, ADR-0003
+- Related ADRs: ADR-002, ADR-003
 
 ## Context
 Historically, the only way to author a mojobol call flow was the Verboice
 Designer GUI, which produced the GUID-heavy multi-file export described in
-ADR-0002. ADR-0002 replaces that export with a single human-readable
-`flow.yml`, and ADR-0003 confines Verboice to a one-time import path — but
+ADR-002. ADR-002 replaces that export with a single human-readable
+`flow.yml`, and ADR-003 confines Verboice to a one-time import path — but
 neither ADR says how new flows should actually be authored going forward.
 Without the Designer GUI, and without asking flow authors to hand-write YAML
 against a schema from scratch, we need a concrete authoring workflow that is
@@ -20,7 +20,7 @@ at least as approachable as the GUI was, ideally more so, since flow authors
 ## Decision
 New flows are authored by describing the desired IVR in natural-language
 conversation with a capable LLM, which emits a valid native `flow.yml`
-(per ADR-0002) directly — the LLM replaces the Verboice Designer GUI as the
+(per ADR-002) directly — the LLM replaces the Verboice Designer GUI as the
 authoring surface. Concretely:
 - We will ship a reusable system prompt that teaches an LLM the native flow
   schema (step types `play`/`capture`/`menu`/`record`/`playloop`, the
@@ -28,7 +28,7 @@ authoring surface. Concretely:
   per-type fields such as `min_length`, `finish_on_key`, `valid_values`,
   `store`, `stop_key`, `max_seconds`) plus a short authoring guide and a set
   of worked example conversations/flows (e.g. a health-survey flow like the
-  one in ADR-0002).
+  one in ADR-002).
 - A flow author converses with the LLM about the call they want (menu
   options, prompts, data to capture); the LLM asks clarifying questions as
   needed and produces `flow.yml` as its output.
@@ -37,16 +37,16 @@ authoring surface. Concretely:
   Asterisk, so authoring errors are caught before a live call flow breaks.
 - The system prompt, guide, and examples are treated as versioned
   documentation/config, not a one-off — they get updated as the native
-  format (ADR-0002) evolves.
+  format (ADR-002) evolves.
 
 ## Consequences
 ### Positive
 - Removes the Verboice Designer GUI as a dependency for new flow authoring,
-  completing the transition started in ADR-0002/ADR-0003.
+  completing the transition started in ADR-002/ADR-003.
 - Non-developer flow authors can describe intent conversationally instead of
   learning a GUI or hand-writing YAML.
 - Because the LLM emits the same native format a human could hand-edit
-  (ADR-0002), authors can always drop into the YAML directly for touch-ups
+  (ADR-002), authors can always drop into the YAML directly for touch-ups
   the conversation doesn't cover.
 - Validation + simulation before deployment catches malformed or
   inconsistent flows (bad `next` references, unreachable steps, missing

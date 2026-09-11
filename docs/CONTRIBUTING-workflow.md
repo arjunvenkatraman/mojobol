@@ -1,10 +1,10 @@
 # Contributor workflow: ADRs → issues → TODOs
 
 Mojobol keeps a strict, mechanical loop so that decisions turn into tracked work
-and nothing actionable lives only in chat or memory (ADR-0001).
+and nothing actionable lives only in chat or memory (ADR-001).
 
 ```
- significant decision ─▶ ADR in docs/adr/ ─▶ "Follow-up work" items
+ significant decision ─▶ ADR in docs/decisions/ ─▶ "Follow-up work" items
                                                    │
                                                    ▼
                                           GitHub issues (the tracker)
@@ -16,7 +16,7 @@ and nothing actionable lives only in chat or memory (ADR-0001).
 ## The rules
 
 1. **Significant decisions get an ADR.** Copy the template from
-   `docs/adr/README.md`, number it, and end it with a
+   `docs/decisions/README.md`, number it, and end it with a
    `## Follow-up work (to be filed as issues)` section.
 2. **Every ADR follow-up becomes a GitHub issue.** No follow-up item is worked
    until it exists as an issue. If you have `issues:write`, file it directly;

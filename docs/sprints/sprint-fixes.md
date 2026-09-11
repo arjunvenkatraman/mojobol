@@ -6,7 +6,7 @@ lands on top of it. This is the hardening pass that de-risks Sprint 1
 (Essentials): the simulator (T7) and quickstart (T9) can only prove themselves
 against an engine that starts and survives a call.
 
-**Why a separate sprint:** the three tasks below are all **ADR-0006** follow-ups
+**Why a separate sprint:** the three tasks below are all **ADR-006** follow-ups
 (correctness + portability), carry no dependency on the new flow format, and are
 each small and mechanical. Pulling them out lets the cheap-tier agents clear them
 in parallel and get merged while the format/loader/simulator design (T4/T5/T7)
@@ -22,11 +22,11 @@ All three are already filed; `Tn` ids match `docs/issues/v3.0-sprint-01.yml`.
 
 | Task | Issue | ADR | Depends on | Tier | Effort |
 |------|-------|-----|-----------|------|--------|
-| T1 Fix runtime bugs (`os.path.isfile`, pandas dep, `stepCapture`, bare `except`) | [#1](https://github.com/arjunvenkatraman/mojobol/issues/1) | 0006 | — | Haiku | S |
-| T2 Port `bin/` scripts Python 2 → 3 (+ CI parse check) | [#2](https://github.com/arjunvenkatraman/mojobol/issues/2) | 0006 | — | Haiku | S |
-| T3 De-hardcode paths; config via `MOJOBOL_CONFIG` env / `--config` | [#3](https://github.com/arjunvenkatraman/mojobol/issues/3) | 0006 | — | Sonnet | M |
+| T1 Fix runtime bugs (`os.path.isfile`, pandas dep, `stepCapture`, bare `except`) | [#1](https://github.com/arjunvenkatraman/mojobol/issues/1) | 006 | — | Haiku | S |
+| T2 Port `bin/` scripts Python 2 → 3 (+ CI parse check) | [#2](https://github.com/arjunvenkatraman/mojobol/issues/2) | 006 | — | Haiku | S |
+| T3 De-hardcode paths; config via `MOJOBOL_CONFIG` env / `--config` | [#3](https://github.com/arjunvenkatraman/mojobol/issues/3) | 006 | — | Sonnet | M |
 
-## Execution order & parallelism (tiered agents — ADR-0007)
+## Execution order & parallelism (tiered agents — ADR-007)
 
 The three are mutually independent — all can start at once.
 

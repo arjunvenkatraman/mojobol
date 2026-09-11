@@ -1,8 +1,8 @@
 # Design memo: GUID-free native format, prompt reuse, and multi-language
 
-- Status: Proposal (feeds T4/T6, and edits to ADR-0002/ADR-0003)
+- Status: Proposal (feeds T4/T6, and edits to ADR-002/ADR-003)
 - Author: Mojolab (design pass on v3.0 native format)
-- Related: ADR-0002, ADR-0003, `docs/issues/v3.0-sprint-01.yml` (T4, T6)
+- Related: ADR-002, ADR-003, `docs/issues/v3.0-sprint-01.yml` (T4, T6)
 
 ## 1. Do we need GUIDs anywhere in v3?
 
@@ -93,7 +93,7 @@ value (§3).
 ### 2.1 Inline `say:` for the simple/common case
 
 Most steps in a real flow play a prompt exactly once, in one language.
-For that case, `say: "<text>"` directly on the step (as ADR-0002 already
+For that case, `say: "<text>"` directly on the step (as ADR-002 already
 specifies) stays the recommended default — no indirection, no table entry,
 the wording sits right next to the step that speaks it. This is the
 95% case and should stay the path of least resistance for both a human
@@ -143,7 +143,7 @@ authors (human or LLM) only learn one indirection concept, not two.
 duplication for reused prompts.** Flows are small (the sample flow has
 6 steps, 9 resources), so duplicating a two-line `say:` string is
 harmless in isolation — but "harmless duplication" is exactly the
-mismatch risk ADR-0002 is trying to retire: two copies of the same
+mismatch risk ADR-002 is trying to retire: two copies of the same
 "invalid input" prompt inevitably drift once someone edits one and not
 the other. A `prompts:` table with a readable key (`invalid_input`,
 `ask_menu`) costs nothing to add and removes the drift risk entirely.
@@ -242,15 +242,15 @@ Verboice-the-GUI is still used: the only existing flow content mojobol has
 — including `samplecallflows/mojobolsamplecallflow/` used for T7's
 simulator and T9's smoke test — is in Verboice's format. Without the
 importer, Sprint 1 has no real flow to exercise the new loader (T5) or the
-simulator (T7) against; the "example flow" ADR-0002/T4 promise would have
+simulator (T7) against; the "example flow" ADR-002/T4 promise would have
 to be hand-authored from scratch instead of migrated, which is more work,
 not less, for exactly the flow everyone already has on disk.
 
 What changes is *why* it's essential: not "because Verboice is a live
-authoring path" (ADR-0003 already forecloses that) but "because it's the
+authoring path" (ADR-003 already forecloses that) but "because it's the
 one-time bulk-conversion path for content that predates v3.0, needed to
 seed the very first native example/test flow." That framing should be
-made explicit in ADR-0003 (see §5) so nobody reads "importer stays" as
+made explicit in ADR-003 (see §5) so nobody reads "importer stays" as
 "Verboice GUI stays relevant."
 
 The GUID→readable-id mapping the importer performs (turning `resource
@@ -274,7 +274,7 @@ entry's per-language `say`/`audio` map, keyed by each localized resource's
 
 ## 5. Concrete change list (for the orchestrator to apply)
 
-**ADR-0002** (`docs/adr/0002-adopt-single-file-native-flow-format.md`):
+**ADR-002** (`docs/decisions/ADR-002-adopt-single-file-native-flow-format.md`):
 - In "Decision," replace the current single-sentence prompt-content bullet
   with the two-tier model: inline `say:`/`audio:` (per-step, optionally a
   `{lang: ...}` map) for one-off prompts, plus an optional top-level
@@ -287,9 +287,9 @@ entry's per-language `say`/`audio` map, keyed by each localized resource's
 - Update the "Follow-up work" T4 line to reference this memo as the format
   spec's multi-language/reuse basis.
 
-**ADR-0003** (`docs/adr/0003-keep-verboice-as-import-only-compatibility.md`):
+**ADR-003** (`docs/decisions/ADR-003-keep-verboice-as-import-only-compatibility.md`):
 - In "Consequences → Negative," replace the open-ended "multi-language
-  Verboice exports need to be reconciled with however ADR-0002 ends up
+  Verboice exports need to be reconciled with however ADR-002 ends up
   handling multi-language natively (tracked under T4)" bullet with the
   concrete mapping from §4: each Verboice `resource` (deduplicated across
   steps that share a GUID) becomes one `prompts:` entry; each of its
@@ -298,7 +298,7 @@ entry's per-language `say`/`audio` map, keyed by each localized resource's
 - Add a sentence to "Decision" making explicit that GUID→readable-name
   resolution (via the Verboice resource's `name:` field, slugified) is
   internal to `import_verboice.py` and never surfaces to the LLM authoring
-  path (ADR-0004) — this forecloses any reading of T6 as reviving Verboice
+  path (ADR-004) — this forecloses any reading of T6 as reviving Verboice
   as a live/ongoing format.
 - Reframe why the importer is Sprint-1-essential (see §4): it's needed to
   produce the first real native example/test flow (T4's worked example,
@@ -319,7 +319,7 @@ entry's per-language `say`/`audio` map, keyed by each localized resource's
   duplicated per step" and "prompt names are derived from each Verboice
   resource's `name:` field (slugified, de-duplicated on collision), never
   from its `guid:`." Update the `adr:` field's implicit scope note (via
-  ADR-0003 edit above) so the issue reads as "seed data for T4/T7/T9," not
+  ADR-003 edit above) so the issue reads as "seed data for T4/T7/T9," not
   as ongoing Verboice support.
 
 ## Summary

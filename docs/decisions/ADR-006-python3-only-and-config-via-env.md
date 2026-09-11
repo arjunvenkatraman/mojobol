@@ -1,10 +1,10 @@
-# ADR-0006: Python 3 only, runtime bug fixes, and config via env/CLI
+# ADR-006: Python 3 only, runtime bug fixes, and config via env/CLI
 
 - Status: Accepted
 - Date: 2026-07-18
 - Deciders: Mojolab (Arjun Venkatraman)
 - Related issues: T1, T2, T3
-- Related ADRs: ADR-0005
+- Related ADRs: ADR-005
 
 ## Context
 Mojobol's engine (`libs/mojobol.py`, `libs/mojoasteriskplayer.py`) is Python 3,
@@ -53,11 +53,11 @@ Standardize the whole codebase on Python 3:
 - The crash-on-every-call bugs (`os.isfile`, `updatedf`/pandas) are removed,
   so `mojobol-svr.py` can complete a call end-to-end.
 - The repo becomes runnable from any checkout location (including the
-  simulator in ADR-0005 and CI), rather than only from `/opt/mojobol`.
+  simulator in ADR-005 and CI), rather than only from `/opt/mojobol`.
 
 ### Negative / Trade-offs
 - Porting `bin/` scripts and de-hardcoding paths touches files with no test
-  coverage; each change should be paired with a simulator run (ADR-0005)
+  coverage; each change should be paired with a simulator run (ADR-005)
   where possible to catch regressions.
 - Removing pandas from `updatedf` may drop functionality that was intended
   but never finished; if that reporting feature is still wanted, it needs to
